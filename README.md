@@ -1,7 +1,3 @@
-<div align="center">
-
-# 🐧 Custom Arch Linux ISO
-
 **A personalized Arch Linux live ISO built with archiso, featuring a pre-configured i3wm desktop environment.**
 
 ![Arch Linux](https://img.shields.io/badge/Arch%20Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white)
@@ -44,6 +40,8 @@
 
 ```
 archlive/
+├── work/                       # 🧱 Temporary build directory (created by mkarchiso, safe to delete)
+├── output/                     # 💿 Final built ISO is placed here
 └── releng/
     ├── package.x86_64          # 📦 Packages to install
     ├── profiledef.sh           # ⚙️ ISO build profile
@@ -60,6 +58,8 @@ archlive/
         └── etc/systemd/system/        # 🔧 Service files
 ```
 
+> `work/` and `output/` are created automatically the first time you build — you don't need to create them manually.
+
 ---
 
 ## 🚀 Build
@@ -74,8 +74,11 @@ sudo pacman -S archiso
 
 ```bash
 cd /path/to/archlive
-sudo mkarchiso -v -w /tmp/archiso-tmp -o ./ releng/
+sudo mkarchiso -v -w work/ -o output/ releng/
 ```
+
+- `-w work/` → temporary working directory used during the build (can be deleted afterward with `sudo rm -rf work/`)
+- `-o output/` → directory where the final `.iso` file is placed once the build finishes
 
 ---
 
@@ -85,7 +88,7 @@ sudo mkarchiso -v -w /tmp/archiso-tmp -o ./ releng/
 <summary><strong>⚡ run_archiso (Fastest)</strong></summary>
 
 ```bash
-sudo run_archiso -i ./releng.iso
+sudo run_archiso -i output/*.iso
 ```
 </details>
 
@@ -94,17 +97,17 @@ sudo run_archiso -i ./releng.iso
 
 Basic:
 ```bash
-qemu-system-x86_64 -cdrom ./releng.iso -m 2048
+qemu-system-x86_64 -cdrom output/*.iso -m 2048
 ```
 
 With KVM acceleration:
 ```bash
-qemu-system-x86_64 -cdrom ./releng.iso -m 4096 -enable-kvm -vga virtio
+qemu-system-x86_64 -cdrom output/*.iso -m 4096 -enable-kvm -vga virtio
 ```
 
 With UEFI boot:
 ```bash
-qemu-system-x86_64 -cdrom ./releng.iso -m 4096 -enable-kvm -bios /usr/share/ovmf/x64/OVMF.fd
+qemu-system-x86_64 -cdrom output/*.iso -m 4096 -enable-kvm -bios /usr/share/ovmf/x64/OVMF.fd
 ```
 </details>
 
@@ -114,7 +117,7 @@ qemu-system-x86_64 -cdrom ./releng.iso -m 4096 -enable-kvm -bios /usr/share/ovmf
 1. Create VM: `Linux → Arch Linux (64-bit)`
 2. Memory: 2048 MB or more
 3. Storage: 20 GB (dynamic)
-4. Mount ISO in Storage settings
+4. Mount the ISO from `output/` in Storage settings
 5. Enable EFI: `Settings → System → Motherboard → Enable EFI`
 6. Enable 3D Acceleration: `Settings → Display → Enable 3D Acceleration`
 7. Start VM
@@ -126,7 +129,7 @@ qemu-system-x86_64 -cdrom ./releng.iso -m 4096 -enable-kvm -bios /usr/share/ovmf
 1. Create VM: `Custom → Linux → Other Linux 5.x kernel 64-bit`
 2. Memory: 2048 MB
 3. Storage: 20 GB
-4. Select ISO image
+4. Select the ISO image from `output/`
 5. Enable EFI: `Settings → Options → Advanced → Enable EFI`
 6. Start VM
 </details>
@@ -193,10 +196,11 @@ ln -sf /usr/lib/systemd/system/NetworkManager.service ./NetworkManager.service
 
 | Action | Command |
 |---|---|
-| 🔨 Build ISO | `sudo mkarchiso -v -w /tmp/archiso-tmp -o ./ releng/` |
-| 🧪 Quick Test | `sudo run_archiso -i ./releng.iso` |
-| 🖥️ QEMU Test | `qemu-system-x86_64 -cdrom ./releng.iso -m 2048` |
-| 💾 Flash to USB | `sudo dd if=releng.iso of=/dev/sdX bs=4M status=progress` |
+| 🔨 Build ISO | `sudo mkarchiso -v -w work/ -o output/ releng/` |
+| 🧹 Clean build dir | `sudo rm -rf work/` |
+| 🧪 Quick Test | `sudo run_archiso -i output/*.iso` |
+| 🖥️ QEMU Test | `qemu-system-x86_64 -cdrom output/*.iso -m 2048` |
+| 💾 Flash to USB | `sudo dd if=output/*.iso of=/dev/sdX bs=4M status=progress` |
 
 > ⚠️ **Warning:** Double-check `/dev/sdX` before flashing — this command will overwrite the target device.
 
@@ -208,6 +212,8 @@ ln -sf /usr/lib/systemd/system/NetworkManager.service ./NetworkManager.service
 - 👤 Default user is `root` (add a user for security)
 - 🌐 Network is managed by NetworkManager (enable the service)
 - 🔐 For UEFI support, configure in `profiledef.sh`
+- 📂 `work/` is a scratch directory recreated on every build — it's safe to delete between builds to save disk space
+- 💿 The final ISO always lands in `output/`, named after the profile (e.g. `output/archlive-YYYY.MM.DD-x86_64.iso`)
 
 ---
 
