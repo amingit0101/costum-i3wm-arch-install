@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Robust CPU temperature reader — greps by label instead of a
+# hardcoded featureN_input path, since that numbering varies
+# between machines/kernels and was the source of the temp2_input
+# read error.
+
+temp=$(sensors 2>/dev/null | grep -E "Package id 0|Tctl|Tdie" | head -n1 | grep -oP '[+-]?\K[0-9]+\.[0-9]+(?=°C)' | head -n1)
+
+# Fallback: if no package-level sensor label matched, grab the
+# first "Core 0" reading instead.
+if [ -z "$temp" ]; then
+  temp=$(sensors 2>/dev/null | grep "Core 0" | head -n1 | grep -oP '[+-]?\K[0-9]+\.[0-9]+(?=°C)' | head -n1)
+fi
+
+if [ -z "$temp" ]; then
+  echo "N/A"
+else
+  printf "%.0f°C\n" "$temp"
+fi

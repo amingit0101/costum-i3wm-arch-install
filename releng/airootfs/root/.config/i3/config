@@ -1,0 +1,191 @@
+# Optimized i3 config for speed and aesthetics
+
+exec --no-startup-id redshift
+
+font pango:Noto Sans, Noto Color Emoji 12
+set $mod Mod4
+
+default_border pixel 1
+gaps inner 10
+gaps outer 5
+gaps top 0
+smart_borders on
+hide_edge_borders smart
+floating_modifier $mod
+
+focus_follows_mouse yes
+mouse_warping none
+focus_wrapping yes
+focus_on_window_activation smart
+
+exec_always --no-startup-id sh -c 'disp=$(xrandr --query | awk "/ connected/ {print \$1; exit}"); xrandr --output "$disp" --dpi 120'
+
+bindsym $mod+Shift+b exec alacritty -e /usr/local/bin/add_binding_i3
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
+
+bindsym $mod+Return exec --no-startup-id alacritty
+bindsym $mod+q kill
+bindsym $mod+Shift+e exec --no-startup-id ~/.config/i3/scripts/powermenu
+
+exec --no-startup-id xss-lock -l ~/.config/i3/scripts/blur-lock
+
+bindsym $mod+Shift+c reload
+bindsym $mod+c exec alacritty -e nvim /root/.config/i3/config
+bindsym $mod+Shift+r restart
+
+bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_up
+bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_down
+
+bindsym $mod+h focus prev
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus next
+
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+s split h
+bindsym $mod+v split v
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+y layout stacking
+bindsym $mod+u layout tabbed
+bindsym $mod+i layout toggle split
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+bindsym $mod+Shift+n exec --no-startup-id ~/.config/i3/scripts/empty_workspace
+
+bindsym $mod+Ctrl+m mark window
+bindsym $mod+Ctrl+Shift+m unmark window
+bindsym $mod+Ctrl+s swap container with mark
+
+mode "Resize" {
+    bindsym h resize shrink width 5 px or 5 ppt
+    bindsym j resize grow height 5 px or 5 ppt
+    bindsym k resize shrink height 5 px or 5 ppt
+    bindsym l resize grow width 5 px or 5 ppt
+
+    bindsym Shift+h resize shrink width 20 px or 20 ppt
+    bindsym Shift+j resize grow height 20 px or 20 ppt
+    bindsym Shift+k resize shrink height 20 px or 20 ppt
+    bindsym Shift+l resize grow width 20 px or 20 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "Resize"
+
+bindsym XF86AudioRaiseVolume exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh volume_up
+bindsym XF86AudioLowerVolume exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh volume_down
+bindsym XF86AudioMute exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh volume_mute
+
+bindsym $mod+XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master 1%+
+bindsym $mod+XF86AudioLowerVolume exec --no-startup-id amixer -D pulse sset Master 1%-
+
+bindsym XF86AudioMicMute exec amixer sset Capture toggle
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+bindsym $mod+p exec --no-startup-id ~/.config/i3/scripts/audio-device-switch
+
+bindsym $mod+w exec firefox
+bindsym $mod+Shift+a exec firefox https://chat.deepseek.com/
+bindsym $mod+n exec alacritty -e ranger
+bindsym Print exec flameshot gui
+bindsym $mod+d exec rofi -show drun
+bindsym $mod+t exec rofi -show window
+bindsym $mod+m exec alacritty -e 'htop'
+bindsym $mod+Shift+t exec Telegram
+bindsym $mod+b exec zathura "$HOME/Downloads/the-linux-command-line-v6-202411.pdf"
+bindsym $mod+Shift+m exec pavucontrol
+
+for_window [class="Pavucontrol"] floating enable, border pixel 1, move position center
+for_window [class="(?i)galculator"] floating enable, border pixel 1, move position center
+for_window [class="Yad"] floating enable, border pixel 1
+for_window [class="Blueberry.py"] floating enable, border pixel 1
+for_window [class="Nm-connection-editor"] floating enable, border pixel 1
+for_window [title="File Operation Progress"] floating enable, border pixel 1
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+
+exec_always ~/.config/i3/scripts/import-gsettings
+exec --no-startup-id /usr/lib/polkit-kde-authentication-agent-1
+exec --no-startup-id dex --autostart --environment i3
+exec --no-startup-id feh --bg-fill "/root/feh_023357_000001_679ef8d58ea071f0f6c5e92b7c4b7785.jpg"
+exec --no-startup-id xset s 300 300
+exec --no-startup-id xset dpms 600 600 600
+exec --no-startup-id /usr/bin/dunst
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
+
+set $nord0  #2E3440
+set $nord1  #3B4252
+set $nord2  #434C5E
+set $nord3  #4C566A
+set $nord4  #D8DEE9
+set $nord5  #E5E9F0
+set $nord6  #ECEFF4
+set $nord7  #8FBCBB
+set $nord8  #88C0D0
+set $nord9  #81A1C1
+set $nord10 #5E81AC
+set $nord11 #BF616A
+set $nord12 #D08770
+set $nord13 #EBCB8B
+set $nord14 #A3BE8C
+set $nord15 #B48EAD
+
+client.focused              $nord10 $nord0  $nord6  $nord8 $nord8
+client.focused_inactive     $nord3  $nord1  $nord4  $nord3 $nord3
+client.unfocused            $nord1  $nord0  $nord4  $nord1 $nord1
+client.urgent               $nord11 $nord11 $nord6  $nord11 $nord11
+
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+exec --no-startup-id setxkbmap -model pc105 -layout us,ara -option "grp:alt_space_toggle"
+
+#exec --no-startup-id picom --config ~/.config/i3/picom.conf
+exec --no-startup-id /usr/local/bin/picom-setup.sh
+exec --no-startup-id sh -c 'disp=$(xrandr --query | awk "/ connected/ {print \$1; exit}"); xrandr --output "$disp" --set TearFree on'
+bindsym $mod+Shift+s exec alacritty -e nvim .bashrc
+bindsym $mod+Shift+p exec --no-startup-id /usr/local/bin/picom-toggle.sh
+bindsym $mod+Shift+w exex --no-startup-id /usr/local/bin/welcom.sh
+bindsym $mod+g exec ghidra
+
+# Welcome screen
+exec --no-startup-id /usr/local/bin/welcome.sh
+bindsym $mod+Shift+i exec --no-startup-id alacritty -e /usr/local/bin/install.sh

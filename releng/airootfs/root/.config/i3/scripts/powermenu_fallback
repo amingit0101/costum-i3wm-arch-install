@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ -f ~/.config/i3/scripts/powermenu ]; then
+    ~/.config/i3/scripts/powermenu
+else
+    rofi -show p -modi p:'rofi-power-menu'
+fi

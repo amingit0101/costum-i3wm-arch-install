@@ -1,0 +1,11 @@
+[Unit]
+Description=Fix script permissions
+Before=xorg.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c "chmod +x /root/.config/i3/scripts/* 2>/dev/null; chmod +x /root/.config/polybar/launch.sh 2>/dev/null; chmod +x /usr/local/bin/* 2>/dev/null; find /root -name '*.sh' -exec chmod +x {} \; 2>/dev/null"
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
